@@ -9,8 +9,15 @@
             "name": "HappyGo",
             "desc": "An interactive word adventure game for children.",
             "icon": "🎮",
-            "url": "https://ccttyylab.github.io/happygo/dist/word-adventure.html",
+            "url": "https://ccttyylab.github.io/happygo/word-adventure.html",
             "planetColor": "#FF9F43"
+        },
+        {
+            "name": "趣味识字",
+            "desc": "快乐学汉字，挑战识字大冒险。",
+            "icon": "✍️",
+            "url": "https://ccttyylab.github.io/happygo/fun-literacy-challenge.html",
+            "planetColor": "#ff6b6b"
         },
         {
             "name": "Github",
