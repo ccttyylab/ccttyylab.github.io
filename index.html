@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CcttyyLab - Galaxy Hopper</title>
+  <style>
+    :root {
+      --primary-color: #6c5ce7;
+      --secondary-color: #a29bfe;
+      --text-color: #dfe6e9;
+      --bg-color: #090a0f;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+    }
+
+    /* Hero Section with Game */
+    #hero-game {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #space-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: crosshair;
+    }
+
+    #ui-layer {
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+      /* Pass clicks to canvas */
+      text-align: center;
+      width: 80%;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 20px rgba(108, 92, 231, 0.8);
+      opacity: 0.8;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: var(--secondary-color);
+      margin-bottom: 2rem;
+      opacity: 0.7;
+    }
+
+    .instruction {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 10px;
+    }
+
+    /* Projects Section */
+    #projects {
+      width: 100%;
+      min-height: 80vh;
+      background: #13141c;
+      padding: 50px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      z-index: 2;
+      box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .section-title {
+      font-size: 2rem;
+      color: white;
+      margin-bottom: 40px;
+      text-align: center;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .project-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 25px;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
+    }
+
+    .project-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .project-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      color: #b2bec3;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section id="hero-game">
+    <canvas id="space-canvas"></canvas>
+    <div id="ui-layer">
+      <h1>CcttyyLab</h1>
+      <p class="subtitle">Explore the Galaxy of Code</p>
+      <div class="instruction">Desktop: Mouse to Steer, Click to Boost<br>Mobile: Touch & Drag</div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <h2 class="section-title">Docking Stations</h2>
+    <div id="project-container" class="project-grid">
+      <!-- Generated via JS -->
+    </div>
+  </section>
+
+  <script>
+    /**
+     * Galaxy Hopper - Navigation Game
+     */
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+    const uiLayer = document.getElementById('ui-layer');
+    const projectContainer = document.getElementById('project-container');
+
+    let width, height;
+    let particles = [];
+    let planets = [];
+
+    // Spaceship State
+    const ship = {
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      angle: 0,
+      thrust: 0,
+      size: 15
+    };
+
+    // Game Config
+    const FRICTION = 0.97;
+    const THRUST_POWER = 0.8;
+    const ROTATION_SMOOTH = 0.1;
+    const MAX_SPEED = 12;
+
+    // Mouse/Touch Input
+    const input = {
+      x: 0,
+      y: 0,
+      active: false
+    };
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+
+      // Reset ship to center if lost
+      if (ship.x === 0 && ship.y === 0) {
+        ship.x = width / 2;
+        ship.y = height * 0.7;
+      }
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Init Ship
+    ship.x = width / 2;
+    ship.y = height * 0.7;
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.z = Math.random() * 2 + 0.5; // Depth
+        this.size = Math.random() * 2;
+        this.alpha = Math.random() * 0.5 + 0.1;
+      }
+
+      update() {
+        this.x -= ship.vx * this.z * 0.1;
+        this.y -= ship.vy * this.z * 0.1;
+
+        if (this.x < 0) this.x += width;
+        if (this.x > width) this.x -= width;
+        if (this.y < 0) this.y += height;
+        if (this.y > height) this.y -= height;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    class Planet {
+      constructor(label, url, x, y, color, size = 60) {
+        this.label = label;
+        this.url = url;
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.size = size;
+        this.pulse = 0;
+      }
+
+      update() {
+        this.x -= ship.vx * 0.5;
+        this.y -= ship.vy * 0.5;
+
+        if (this.x < -400) this.x += width + 800;
+        if (this.x > width + 400) this.x -= width + 800;
+        if (this.y < -400) this.y += height + 800;
+        if (this.y > height + 400) this.y -= height + 800;
+
+        this.pulse += 0.05;
+      }
+
+      draw() {
+        // Glow
+        const glowSize = this.size + Math.sin(this.pulse) * 5;
+        const g = ctx.createRadialGradient(this.x, this.y, this.size * 0.5, this.x, this.y, glowSize * 2);
+        g.addColorStop(0, this.color);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, glowSize * 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Body
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(this.label, this.x, this.y + this.size + 30);
+      }
+
+      checkCollision(s) {
+        const dx = s.x - this.x;
+        const dy = s.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < this.size + s.size) {
+          window.location.href = this.url;
+        }
+      }
+    }
+
+    // Load Config and Init
+    async function init() {
+      try {
+        const response = await fetch('./projects.json');
+        const config = await response.json();
+
+        // Update UI Text
+        document.title = `${config.title} - Lab`;
+        document.querySelector('h1').textContent = config.title;
+        document.querySelector('.subtitle').textContent = config.subtitle;
+        document.querySelector('.instruction').innerHTML = config.heroConfig.instruction;
+
+        // Render Project Cards
+        projectContainer.innerHTML = '';
+        config.projects.forEach((proj, index) => {
+          const card = document.createElement('a');
+          card.href = proj.url;
+          card.className = 'project-card';
+          card.innerHTML = `
+            <div class="project-icon">${proj.icon}</div>
+            <div class="project-name">${proj.name}</div>
+            <div class="project-desc">${proj.desc}</div>
+          `;
+          projectContainer.appendChild(card);
+
+          // Add corresponding planet
+          const angle = (index / config.projects.length) * Math.PI * 2;
+          const dist = 300;
+          const px = width / 2 + Math.cos(angle) * dist;
+          const py = height / 2 + Math.sin(angle) * dist;
+          planets.push(new Planet(proj.name, proj.url, px, py, proj.planetColor || '#6c5ce7'));
+        });
+
+        startLoop();
+      } catch (err) {
+        console.error('Failed to load projects:', err);
+      }
+    }
+
+    // Init Particles
+    for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+    // Input Handling
+    canvas.addEventListener('mousemove', e => {
+      input.x = e.clientX;
+      input.y = e.clientY;
+    });
+
+    canvas.addEventListener('mousedown', () => input.active = true);
+    canvas.addEventListener('mouseup', () => input.active = false);
+
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      input.x = e.touches[0].clientX;
+      input.y = e.touches[0].clientY;
+    }, { passive: false });
+
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      input.active = true;
+      input.x = e.touches[0].clientX;
+      input.y = e.touches[0].clientY;
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => input.active = false);
+
+    // Game Loop
+    function startLoop() {
+      function loop() {
+        ctx.fillStyle = '#090a0f';
+        ctx.fillRect(0, 0, width, height);
+
+        const dx = input.x - ship.x;
+        const dy = input.y - ship.y;
+        const targetAngle = Math.atan2(dy, dx);
+
+        let diff = targetAngle - ship.angle;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        ship.angle += diff * ROTATION_SMOOTH;
+
+        if (input.active) {
+          ship.vx += Math.cos(ship.angle) * THRUST_POWER;
+          ship.vy += Math.sin(ship.angle) * THRUST_POWER;
+
+          ctx.fillStyle = '#fab1a0';
+          const flameLen = Math.random() * 30 + 10;
+          const fx = ship.x - Math.cos(ship.angle) * flameLen;
+          const fy = ship.y - Math.sin(ship.angle) * flameLen;
+          ctx.beginPath();
+          ctx.arc(fx, fy, 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        const speed = Math.sqrt(ship.vx * ship.vx + ship.vy * ship.vy);
+        if (speed > MAX_SPEED) {
+          ship.vx = (ship.vx / speed) * MAX_SPEED;
+          ship.vy = (ship.vy / speed) * MAX_SPEED;
+        }
+
+        ship.vx *= FRICTION;
+        ship.vy *= FRICTION;
+        ship.x += ship.vx;
+        ship.y += ship.vy;
+
+        if (ship.x < 0) { ship.x = 0; ship.vx *= -0.8; }
+        if (ship.x > width) { ship.x = width; ship.vx *= -0.8; }
+        if (ship.y < 0) { ship.y = 0; ship.vy *= -0.8; }
+        if (ship.y > height) { ship.y = height; ship.vy *= -0.8; }
+
+        particles.forEach(p => {
+          p.update();
+          p.draw();
+        });
+
+        planets.forEach(p => {
+          p.update();
+          p.draw();
+          p.checkCollision(ship);
+        });
+
+        ctx.save();
+        ctx.translate(ship.x, ship.y);
+        ctx.rotate(ship.angle);
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.moveTo(15, 0);
+        ctx.lineTo(-10, 10);
+        ctx.lineTo(-5, 0);
+        ctx.lineTo(-10, -10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        if (input.active) {
+          uiLayer.style.opacity = Math.max(0, 1 - speed / 5);
+        } else {
+          uiLayer.style.opacity = 1;
+        }
+
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    init();
+
+  </script>
+</body>
+
+</html>

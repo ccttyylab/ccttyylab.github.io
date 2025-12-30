@@ -1,0 +1,23 @@
+{
+    "title": "CcttyyLab",
+    "subtitle": "Explore the Galaxy of Code",
+    "heroConfig": {
+        "instruction": "Desktop: Mouse to Steer, Click to Boost<br>Mobile: Touch & Drag"
+    },
+    "projects": [
+        {
+            "name": "HappyGo",
+            "desc": "An interactive word adventure game for children.",
+            "icon": "🎮",
+            "url": "https://ccttyylab.github.io/happygo/dist/word-adventure.html",
+            "planetColor": "#FF9F43"
+        },
+        {
+            "name": "Github",
+            "desc": "View our source code and contributions on GitHub.",
+            "icon": "🐙",
+            "url": "https://github.com/ccttyylab",
+            "planetColor": "#2d3436"
+        }
+    ]
+}
