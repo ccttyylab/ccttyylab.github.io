@@ -20,6 +20,13 @@
             "planetColor": "#ff6b6b"
         },
         {
+            "name": "FM Radio",
+            "desc": "A modern web radio player with custom stations.",
+            "icon": "📻",
+            "url": "https://ccttyylab.github.io/fm/",
+            "planetColor": "#6366f1"
+        },
+        {
             "name": "Github",
             "desc": "View our source code and contributions on GitHub.",
             "icon": "🐙",

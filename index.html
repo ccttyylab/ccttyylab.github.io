@@ -3,464 +3,314 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CcttyyLab - Galaxy Hopper</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CcttyyLab - 梦幻代码星系</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Noto+Sans+SC:wght@300;400;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
-      --primary-color: #6c5ce7;
-      --secondary-color: #a29bfe;
-      --text-color: #dfe6e9;
-      --bg-color: #090a0f;
+      /* 融合蓝、紫、橙的流光色彩 */
+      --c-blue: #2563eb;
+      --c-purple: #7c3aed;
+      --c-orange: #f59e0b;
+      --text-main: #ffffff;
+      --text-dim: rgba(255, 255, 255, 0.6);
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
-      overflow-y: auto;
+      background-color: #030014;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
       overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      user-select: none;
+      line-height: 1.6;
+      min-height: 100vh;
     }
 
-    /* Hero Section with Game */
-    #hero-game {
-      width: 100%;
-      height: 100vh;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #space-canvas {
-      position: absolute;
+    /* 梦幻流光背景 */
+    .gradient-bg {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1;
-      cursor: crosshair;
+      z-index: -1;
+      background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+      filter: blur(80px);
+      animation: drift 20s infinite alternate ease-in-out;
     }
 
-    #ui-layer {
-      position: absolute;
-      z-index: 10;
-      pointer-events: none;
-      /* Pass clicks to canvas */
+    @keyframes drift {
+      from {
+        transform: scale(1) translate(0, 0);
+      }
+
+      to {
+        transform: scale(1.1) translate(-2%, -2%);
+      }
+    }
+
+    /* 动态网格点 */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+
+    header {
       text-align: center;
-      width: 80%;
+      margin-bottom: 80px;
+      animation: fadeIn 1.2s ease-out;
     }
 
     h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 20px rgba(108, 92, 231, 0.8);
-      opacity: 0.8;
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      font-weight: 800;
+      letter-spacing: -3px;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.4) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    p.subtitle {
-      font-size: 1.2rem;
-      color: var(--secondary-color);
-      margin-bottom: 2rem;
-      opacity: 0.7;
-    }
-
-    .instruction {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-top: 10px;
-    }
-
-    /* Projects Section */
-    #projects {
-      width: 100%;
-      min-height: 80vh;
-      background: #13141c;
-      padding: 50px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-sizing: border-box;
-      z-index: 2;
-      box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    .section-title {
-      font-size: 2rem;
-      color: white;
-      margin-bottom: 40px;
-      text-align: center;
-      font-weight: 300;
-      letter-spacing: 2px;
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--c-purple);
+      font-weight: 600;
+      letter-spacing: 6px;
       text-transform: uppercase;
+      margin-bottom: 10px;
     }
 
+    /* 玻璃拟态网格 */
     .project-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      width: 100%;
-      max-width: 1000px;
+      gap: 32px;
+      perspective: 1000px;
     }
 
     .project-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      padding: 25px;
-      transition: all 0.3s;
+      position: relative;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 40px;
       text-decoration: none;
       color: inherit;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      backdrop-filter: blur(5px);
+      min-height: 280px;
+      /* 细腻的反光边缘 */
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
     }
 
+    /* 浮空上浮反馈 */
     .project-card:hover {
-      transform: translateY(-5px);
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--primary-color);
-      box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
+      transform: translateY(-20px) scale(1.03);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.25);
+      /* 深远投影 */
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
     }
 
-    .project-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
+    .card-icon {
+      font-size: 3.5rem;
+      margin-bottom: 30px;
+      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.1));
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .project-name {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 8px;
+    .project-card:hover .card-icon {
+      transform: scale(1.1) translateY(-5px);
     }
 
-    .project-desc {
-      color: #b2bec3;
-      font-size: 0.9rem;
-      line-height: 1.4;
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .card-desc {
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* 每一个卡片的个性化发光 */
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      opacity: 0;
+      transition: opacity 0.6s;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--px) var(--py), rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+    }
+
+    .project-card:hover::after {
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 60px 20px;
+      }
+
+      h1 {
+        font-size: 3.5rem;
+      }
+
+      .project-card {
+        padding: 32px;
+        min-height: 240px;
+      }
+    }
+
+    footer {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      opacity: 0.5;
     }
   </style>
 </head>
 
 <body>
 
-  <section id="hero-game">
-    <canvas id="space-canvas"></canvas>
-    <div id="ui-layer">
-      <h1>CcttyyLab</h1>
-      <p class="subtitle">Explore the Galaxy of Code</p>
-      <div class="instruction">Desktop: Mouse to Steer, Click to Boost<br>Mobile: Touch & Drag</div>
-    </div>
-  </section>
+  <div class="gradient-bg"></div>
+  <canvas id="bg-canvas"></canvas>
 
-  <section id="projects">
-    <h2 class="section-title">Docking Stations</h2>
-    <div id="project-container" class="project-grid">
-      <!-- Generated via JS -->
+  <div class="container">
+    <header>
+      <div class="subtitle">STELLAR HUB</div>
+      <h1>CCTTYY LAB</h1>
+      <p id="hero-subtitle" style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">数字艺术与代码逻辑的交汇点</p>
+    </header>
+
+    <div id="project-grid" class="project-grid">
+      <!-- JS 注入 -->
     </div>
-  </section>
+
+    <footer>&copy; 2024 CCTTYY LAB. BEYOND THE LIMIT.</footer>
+  </div>
 
   <script>
-    /**
-     * Galaxy Hopper - Navigation Game
-     */
-    const canvas = document.getElementById('space-canvas');
+    const grid = document.getElementById('project-grid');
+
+    async function init() {
+      try {
+        const res = await fetch('https://ccttyylab.github.io/projects.json');
+        const data = await res.json();
+
+        data.projects.forEach((proj, i) => {
+          const card = document.createElement('a');
+          card.href = proj.url;
+          card.className = 'project-card';
+
+          // 每一个卡片的个性化边框色（光晕暗示）
+          const accentColor = proj.planetColor || '#7c3aed';
+          card.style.borderBottom = `2px solid ${accentColor}33`; // 20% opacity
+
+          card.innerHTML = `
+                        <div class="card-icon">${proj.icon}</div>
+                        <div class="card-body">
+                            <div class="card-title">${proj.name}</div>
+                            <div class="card-desc">${proj.desc}</div>
+                        </div>
+                    `;
+
+          // 鼠标跟随发光逻辑
+          card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--px', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--py', `${e.clientY - rect.top}px`);
+          });
+
+          grid.appendChild(card);
+        });
+      } catch (e) { console.error(e); }
+    }
+
+    // 星空粒子背景
+    const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
-    const uiLayer = document.getElementById('ui-layer');
-    const projectContainer = document.getElementById('project-container');
-
-    let width, height;
-    let particles = [];
-    let planets = [];
-
-    // Spaceship State
-    const ship = {
-      x: 0,
-      y: 0,
-      vx: 0,
-      vy: 0,
-      angle: 0,
-      thrust: 0,
-      size: 15
-    };
-
-    // Game Config
-    const FRICTION = 0.97;
-    const THRUST_POWER = 0.8;
-    const ROTATION_SMOOTH = 0.1;
-    const MAX_SPEED = 12;
-
-    // Mouse/Touch Input
-    const input = {
-      x: 0,
-      y: 0,
-      active: false
-    };
+    let w, h, particles = [];
 
     function resize() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
 
-      // Reset ship to center if lost
-      if (ship.x === 0 && ship.y === 0) {
-        ship.x = width / 2;
-        ship.y = height * 0.7;
+    class Particle {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.s = Math.random() * 1.5;
+        this.o = Math.random();
       }
+      draw() {
+        ctx.fillStyle = `rgba(255,255,255,${this.o * 0.3})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => p.draw());
+      requestAnimationFrame(animate);
     }
 
     window.addEventListener('resize', resize);
     resize();
-
-    // Init Ship
-    ship.x = width / 2;
-    ship.y = height * 0.7;
-
-    class Particle {
-      constructor() {
-        this.reset();
-      }
-
-      reset() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.z = Math.random() * 2 + 0.5; // Depth
-        this.size = Math.random() * 2;
-        this.alpha = Math.random() * 0.5 + 0.1;
-      }
-
-      update() {
-        this.x -= ship.vx * this.z * 0.1;
-        this.y -= ship.vy * this.z * 0.1;
-
-        if (this.x < 0) this.x += width;
-        if (this.x > width) this.x -= width;
-        if (this.y < 0) this.y += height;
-        if (this.y > height) this.y -= height;
-      }
-
-      draw() {
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    class Planet {
-      constructor(label, url, x, y, color, size = 60) {
-        this.label = label;
-        this.url = url;
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.size = size;
-        this.pulse = 0;
-      }
-
-      update() {
-        this.x -= ship.vx * 0.5;
-        this.y -= ship.vy * 0.5;
-
-        if (this.x < -400) this.x += width + 800;
-        if (this.x > width + 400) this.x -= width + 800;
-        if (this.y < -400) this.y += height + 800;
-        if (this.y > height + 400) this.y -= height + 800;
-
-        this.pulse += 0.05;
-      }
-
-      draw() {
-        // Glow
-        const glowSize = this.size + Math.sin(this.pulse) * 5;
-        const g = ctx.createRadialGradient(this.x, this.y, this.size * 0.5, this.x, this.y, glowSize * 2);
-        g.addColorStop(0, this.color);
-        g.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, glowSize * 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Body
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Label
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 16px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(this.label, this.x, this.y + this.size + 30);
-      }
-
-      checkCollision(s) {
-        const dx = s.x - this.x;
-        const dy = s.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < this.size + s.size) {
-          window.location.href = this.url;
-        }
-      }
-    }
-
-    // Load Config and Init
-    async function init() {
-      try {
-        const response = await fetch('./projects.json');
-        const config = await response.json();
-
-        // Update UI Text
-        document.title = `${config.title} - Lab`;
-        document.querySelector('h1').textContent = config.title;
-        document.querySelector('.subtitle').textContent = config.subtitle;
-        document.querySelector('.instruction').innerHTML = config.heroConfig.instruction;
-
-        // Render Project Cards
-        projectContainer.innerHTML = '';
-        config.projects.forEach((proj, index) => {
-          const card = document.createElement('a');
-          card.href = proj.url;
-          card.className = 'project-card';
-          card.innerHTML = `
-            <div class="project-icon">${proj.icon}</div>
-            <div class="project-name">${proj.name}</div>
-            <div class="project-desc">${proj.desc}</div>
-          `;
-          projectContainer.appendChild(card);
-
-          // Add corresponding planet
-          const angle = (index / config.projects.length) * Math.PI * 2;
-          const dist = 300;
-          const px = width / 2 + Math.cos(angle) * dist;
-          const py = height / 2 + Math.sin(angle) * dist;
-          planets.push(new Planet(proj.name, proj.url, px, py, proj.planetColor || '#6c5ce7'));
-        });
-
-        startLoop();
-      } catch (err) {
-        console.error('Failed to load projects:', err);
-      }
-    }
-
-    // Init Particles
-    for (let i = 0; i < 100; i++) particles.push(new Particle());
-
-    // Input Handling
-    canvas.addEventListener('mousemove', e => {
-      input.x = e.clientX;
-      input.y = e.clientY;
-    });
-
-    canvas.addEventListener('mousedown', () => input.active = true);
-    canvas.addEventListener('mouseup', () => input.active = false);
-
-    canvas.addEventListener('touchmove', e => {
-      e.preventDefault();
-      input.x = e.touches[0].clientX;
-      input.y = e.touches[0].clientY;
-    }, { passive: false });
-
-    canvas.addEventListener('touchstart', e => {
-      e.preventDefault();
-      input.active = true;
-      input.x = e.touches[0].clientX;
-      input.y = e.touches[0].clientY;
-    }, { passive: false });
-
-    canvas.addEventListener('touchend', () => input.active = false);
-
-    // Game Loop
-    function startLoop() {
-      function loop() {
-        ctx.fillStyle = '#090a0f';
-        ctx.fillRect(0, 0, width, height);
-
-        const dx = input.x - ship.x;
-        const dy = input.y - ship.y;
-        const targetAngle = Math.atan2(dy, dx);
-
-        let diff = targetAngle - ship.angle;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        while (diff > Math.PI) diff -= Math.PI * 2;
-        ship.angle += diff * ROTATION_SMOOTH;
-
-        if (input.active) {
-          ship.vx += Math.cos(ship.angle) * THRUST_POWER;
-          ship.vy += Math.sin(ship.angle) * THRUST_POWER;
-
-          ctx.fillStyle = '#fab1a0';
-          const flameLen = Math.random() * 30 + 10;
-          const fx = ship.x - Math.cos(ship.angle) * flameLen;
-          const fy = ship.y - Math.sin(ship.angle) * flameLen;
-          ctx.beginPath();
-          ctx.arc(fx, fy, 5, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        const speed = Math.sqrt(ship.vx * ship.vx + ship.vy * ship.vy);
-        if (speed > MAX_SPEED) {
-          ship.vx = (ship.vx / speed) * MAX_SPEED;
-          ship.vy = (ship.vy / speed) * MAX_SPEED;
-        }
-
-        ship.vx *= FRICTION;
-        ship.vy *= FRICTION;
-        ship.x += ship.vx;
-        ship.y += ship.vy;
-
-        if (ship.x < 0) { ship.x = 0; ship.vx *= -0.8; }
-        if (ship.x > width) { ship.x = width; ship.vx *= -0.8; }
-        if (ship.y < 0) { ship.y = 0; ship.vy *= -0.8; }
-        if (ship.y > height) { ship.y = height; ship.vy *= -0.8; }
-
-        particles.forEach(p => {
-          p.update();
-          p.draw();
-        });
-
-        planets.forEach(p => {
-          p.update();
-          p.draw();
-          p.checkCollision(ship);
-        });
-
-        ctx.save();
-        ctx.translate(ship.x, ship.y);
-        ctx.rotate(ship.angle);
-        ctx.fillStyle = 'white';
-        ctx.beginPath();
-        ctx.moveTo(15, 0);
-        ctx.lineTo(-10, 10);
-        ctx.lineTo(-5, 0);
-        ctx.lineTo(-10, -10);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-
-        if (input.active) {
-          uiLayer.style.opacity = Math.max(0, 1 - speed / 5);
-        } else {
-          uiLayer.style.opacity = 1;
-        }
-
-        requestAnimationFrame(loop);
-      }
-      loop();
-    }
-
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
     init();
-
+    animate();
   </script>
 </body>
 
