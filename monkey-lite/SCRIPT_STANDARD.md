@@ -93,6 +93,7 @@
 
 ### 3.1 基础原则
 - **Shadow DOM**: 必须使用 Shadow DOM 隔离样​​式，避免污染原网页。
+- **Host 容器**: 宿主元素（Shadow Root 的挂载点）必须添加类名 `ccttyy-script-host`，以便统一管理（如反向缩放）。
 - **字体标准**: 默认字体大小统一为 **12px**，标题可适当增大 (14px)。
 - **响应式布局**: 采用 **Mobile-First** 策略，PC 与移动端共用一套紧凑布局。
 
@@ -118,8 +119,9 @@
     padding: 16px;
     border-radius: 12px;
     width: 85%;           /* 移动端宽度 */
-    max-width: 480px;     /* PC 端最大宽度 */
-    max-height: 80vh;
+    max-width: 500px;     /* 最大宽度 500px */
+    min-height: 80vh;     /* 最小高度 80vh */
+    max-height: 90vh;     /* 防止溢出屏幕 */
     font-size: 12px;      /* 标准字体 */
     display: flex;
     flex-direction: column;
