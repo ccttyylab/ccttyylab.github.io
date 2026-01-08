@@ -113,7 +113,7 @@
     align-items: center;
 }
 
-/* 弹窗主体 */
+/* 弹窗主体 - 采用 Flex 布局 */
 .modal {
     background: white;
     padding: 16px;
@@ -122,39 +122,51 @@
     max-width: 500px;     /* 最大宽度 500px */
     min-height: 80vh;     /* 最小高度 80vh */
     max-height: 90vh;     /* 防止溢出屏幕 */
-    font-size: 12px;      /* 标准字体 */
+    font-size: 12px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-    overflow: hidden;     /* 确保子元素溢出处理 */
+    overflow: hidden;     /* 必须隐藏溢出，由子容器控制滚动 */
 }
 
-/* 顶部区域 - 固定高度 */
+/* 1. 顶部区域 (Header) - 固定高度 */
 .header {
     height: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #eee;
-    flex-shrink: 0;       /* 防止被压缩 */
+    flex-shrink: 0;       /* 禁止压缩 */
 }
 
-/* 内容区域 - 自动占据剩余空间并支持滚动 */
+/* 2. 标签切换 (Tabs) - 固定高度 */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    margin-top: 10px;
+    flex-shrink: 0;       /* 禁止压缩 */
+}
+
+/* 3. 内容区域 (Content) - 自动填充并内部滚动 */
 .tab-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 0;
+    flex: 1;              /* 占据所有剩余空间 */
+    overflow-y: auto;     /* 启用内部滚动 */
+    padding: 10px 0;
 }
 
-/* 底部区域 - 固定高度 */
-.btn-group {
+/* 4. 底部区域 (Footer) - 固定高度 */
+.footer {
     height: 50px;
     display: flex;
     gap: 10px;
-    align-items: flex-end;
+    align-items: center;  /* 垂直居中 */
     border-top: 1px solid #eee;
-    flex-shrink: 0;       /* 防止被压缩 */
+    flex-shrink: 0;       /* 禁止压缩 */
+    margin-top: 10px;
 }
+
+/* 控件详情样式见下文... */
+
 ```
 
 ### 3.3 控件样式
@@ -222,16 +234,33 @@ pre {
 
 **HTML 结构参考：**
 ```html
-<div class="tabs">
-    <div class="tab-item active" data-tab="settings">设置</div>
-    <div class="tab-item" data-tab="data">数据</div>
-</div>
-<div class="tab-content">
-    <div class="tab-pane active" id="pane-settings">
-        <!-- 设置控件 -->
+<div class="modal">
+    <!-- 1. Header -->
+    <div class="header">
+        <div class="title">设置中心</div>
+        <div class="close-btn">×</div>
     </div>
-    <div class="tab-pane" id="pane-data">
-        <pre><!-- 数据展示 --></pre>
+    
+    <!-- 2. Tabs -->
+    <div class="tabs">
+        <div class="tab-item active" data-tab="settings">设置</div>
+        <div class="tab-item" data-tab="data">数据</div>
+    </div>
+    
+    <!-- 3. Content -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="pane-settings">
+            <!-- 设置控件 -->
+        </div>
+        <div class="tab-pane" id="pane-data">
+            <pre><!-- 数据展示 --></pre>
+        </div>
+    </div>
+    
+    <!-- 4. Footer -->
+    <div class="footer">
+        <button class="btn btn-secondary">取消</button>
+        <button class="btn btn-primary">保存</button>
     </div>
 </div>
 ```
