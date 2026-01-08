@@ -126,6 +126,34 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    overflow: hidden;     /* 确保子元素溢出处理 */
+}
+
+/* 顶部区域 - 固定高度 */
+.header {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;       /* 防止被压缩 */
+}
+
+/* 内容区域 - 自动占据剩余空间并支持滚动 */
+.tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0;
+}
+
+/* 底部区域 - 固定高度 */
+.btn-group {
+    height: 50px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;       /* 防止被压缩 */
 }
 ```
 
