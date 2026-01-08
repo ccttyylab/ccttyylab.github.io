@@ -120,13 +120,13 @@
     border-radius: 12px;
     width: 85%;           /* 移动端宽度 */
     max-width: 500px;     /* 最大宽度 500px */
-    min-height: 80vh;     /* 最小高度 80vh */
+    height: 80vh;         /* 固定高度，确保切换 Tab 时高度不跳动 */
     max-height: 90vh;     /* 防止溢出屏幕 */
     font-size: 12px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 24px rgba(0,0,0,0.2);
-    overflow: hidden;     /* 必须隐藏溢出，由子容器控制滚动 */
+    overflow: hidden;     /* 必须隐藏溢出，由内容区控制滚动 */
 }
 
 /* 1. 顶部区域 (Header) - 固定高度 */
