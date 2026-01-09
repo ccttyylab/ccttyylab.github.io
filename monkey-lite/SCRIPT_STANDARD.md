@@ -106,6 +106,7 @@
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.5);
     z-index: 10000;
     display: flex;
@@ -121,7 +122,9 @@
     width: 85%;           /* 移动端宽度 */
     max-width: 500px;     /* 最大宽度 500px */
     height: 80vh;         /* 固定高度，确保切换 Tab 时高度不跳动 */
+    height: 80dvh;
     max-height: 90vh;     /* 防止溢出屏幕 */
+    max-height: 90dvh;
     font-size: 12px;
     display: flex;
     flex-direction: column;
