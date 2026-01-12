@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         网页整体缩放工具
+// @name         [Monkey-Lite] 网页整体缩放工具
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  通过油猴菜单调整页面整体缩放，值保存在SessionStorage中，支持现代浏览器

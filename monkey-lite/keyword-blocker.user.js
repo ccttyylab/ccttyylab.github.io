@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         社交平台关键词屏蔽器
+// @name         [Monkey-Lite] 社交平台关键词屏蔽器
 // @namespace    http://tampermonkey.net/
 // @version      0.4
 // @description  自动隐藏社交平台（知乎、小红书、微博、X）中包含指定关键词的内容。
