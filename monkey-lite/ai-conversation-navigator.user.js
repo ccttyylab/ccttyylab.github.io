@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Gemini 对话导航 (AI Conversation Navigator)
+// @name         AI Conversation Navigator
 // @namespace    http://tampermonkey.net/
 // @version      1.6
 // @description  Gemini 侧边栏导航：自动适配主题、懒加载、悬停显示完整提问内容。
